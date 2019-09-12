@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Олег Денисов](https://up.htmlacademy.ru/javascript/18/user/1191195).
-* Наставник: `Неизвестно`.
+* Наставник: `Владимир Кабыш`.
 
 ---
 
