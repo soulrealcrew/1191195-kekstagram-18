@@ -86,5 +86,8 @@ var renderPictureList = function (photosArray) {
   return fragment;
 };
 
+// Получаем массив с фотографиями и коментариями
+var completedPhotoList = getPictureList(PICTURES_COUNT);
+
 // Финальная отрисовка
-pictureList.appendChild(renderPictureList(getPictureList(PICTURES_COUNT)));
+pictureList.appendChild(renderPictureList(completedPhotoList));
