@@ -10,6 +10,9 @@ var COMMENT_AUTHOR_NAME = ['Василиса', 'Фатима', 'Лысый', 'С
 var templatePicture = document.querySelector('#picture');
 var templatePictureItem = templatePicture.content.querySelector('.picture');
 var pictureList = document.querySelector('.pictures');
+var bigPicture = document.querySelector('.big-picture');
+var bigPictureCommentsList = bigPicture.querySelector('.social__comments');
+var bigPictureComment = bigPictureCommentsList.querySelector('.social__comment');
 
 // Генерация числа в заданном диапазоне, либо от 0 до указанного значения
 var getRandomNumber = function (max, min) {
@@ -95,10 +98,6 @@ var completedPhotoList = getPictureList(PICTURES_COUNT);
 pictureList.appendChild(renderPictureList(completedPhotoList));
 
 // Дополнительное задание
-var bigPicture = document.querySelector('.big-picture');
-var bigPictureCommentsList = bigPicture.querySelector('.social__comments');
-var bigPictureComment = bigPictureCommentsList.querySelector('.social__comment');
-
 // Собирает DOM элемент одного комментария
 var getCommentElement = function (comment) {
   var pictureCommentElement = bigPictureComment.cloneNode(true);
