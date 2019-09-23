@@ -12,7 +12,7 @@ var templatePictureItem = templatePicture.content.querySelector('.picture');
 var pictureList = document.querySelector('.pictures');
 
 // Генерация числа в заданном диапазоне, либо от 0 до указанного значения
-var randomNumber = function (max, min) {
+var getRandomNumber = function (max, min) {
   if (min === undefined) {
     min = 0;
   }
@@ -26,16 +26,15 @@ var getRandomArrElement = function (arr) {
 
 // Генерируем объект комментария
 var getRandomComment = function () {
-  var tempObj = {
-    avatar: 'img/avatar-' + randomNumber(6, 1) + '.svg',
+  return {
+    avatar: 'img/avatar-' + getRandomNumber(6, 1) + '.svg',
     message: getRandomArrElement(AUTHOR_COMMENTS),
     name: getRandomArrElement(COMMENT_AUTHOR_NAME),
   };
-  return tempObj;
 };
 
 // Генерируем массив с указанным количеством комментариев
-var getCommentsList = function (commentsCount) {
+var getCommentsData = function (commentsCount) {
   var tempArray = [];
   for (var i = 0; i < commentsCount; i++) {
     tempArray.push(getRandomComment());
@@ -46,13 +45,13 @@ var getCommentsList = function (commentsCount) {
 
 // Маппинг объекта фотографии
 var getRandomPictureItem = function (imgUrl, description, likesCount, comment) {
-  var tempObj = {
+  return {
     url: imgUrl,
     description: description,
     likes: likesCount,
     comments: comment,
   };
-  return tempObj;
+
 };
 
 // Генерация массива из объектов фотографий
@@ -61,8 +60,8 @@ var getPictureList = function (pictureCount) {
   for (var i = 1; i <= pictureCount; i++) {
     var pictureUrl = 'photos/' + i + '.jpg';
     var pictureDiscription = 'Описание фотографии';
-    var likesCount = randomNumber(LIKES_COUNT_MAX, LIKES_COUNT_MIN);
-    var pictureComments = getCommentsList(randomNumber(2, 1));
+    var likesCount = getRandomNumber(LIKES_COUNT_MAX, LIKES_COUNT_MIN);
+    var pictureComments = getCommentsData(getRandomNumber(2, 1));
     tempArray.push(getRandomPictureItem(pictureUrl, pictureDiscription, likesCount, pictureComments));
   }
   return tempArray;
@@ -95,3 +94,55 @@ var completedPhotoList = getPictureList(PICTURES_COUNT);
 
 // Финальная отрисовка
 pictureList.appendChild(renderPictureList(completedPhotoList));
+
+// Дополнительное задание
+var bigPicture = document.querySelector('.big-picture');
+var bigPictureCommentsList = bigPicture.querySelector('.social__comments');
+var bigPictureComment = bigPictureCommentsList.querySelector('.social__comment');
+
+// Собирает DOM элемент одного комментария
+var getCommentElement = function (comment) {
+  var pictureCommentElement = bigPictureComment.cloneNode(true);
+  var pictureCommentElementImg = pictureCommentElement.querySelector('.social__picture');
+
+  pictureCommentElementImg.src = comment.avatar;
+  pictureCommentElementImg.alt = comment.name;
+  pictureCommentElement.querySelector('.social__text').textContent = comment.message;
+
+  return pictureCommentElement;
+};
+
+// Собирает все DOM-комментарии в один фрагмент для далнейшего рендера
+var getCommentList = function (commentsArray) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < commentsArray.length; i++) {
+    fragment.appendChild(getCommentElement(commentsArray[i]));
+  }
+  return fragment;
+};
+
+// Финальный рендер большой картинки с комментариями
+var renderBigPicture = function (pictureItem) {
+  var maxShowComments = 5;
+
+  bigPicture.querySelector('.big-picture__img').children[0].src = pictureItem.url;
+  bigPicture.querySelector('.likes-count').textContent = pictureItem.likes;
+  bigPicture.querySelector('.comments-count').textContent = pictureItem.comments.length;
+  bigPictureCommentsList.innerHTML = '';
+  bigPictureCommentsList.appendChild(getCommentList(pictureItem.comments));
+
+  if (pictureItem.comments.length <= maxShowComments) {
+    bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
+    bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
+  }
+};
+
+// Функция показа большой картинки
+var showBigPicture = function (photo) {
+  bigPicture.classList.remove('hidden');
+  renderBigPicture(photo);
+};
+
+showBigPicture(completedPhotoList[0]);
+
