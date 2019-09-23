@@ -51,7 +51,6 @@ var getRandomPictureItem = function (imgUrl, description, likesCount, comment) {
     likes: likesCount,
     comments: comment,
   };
-
 };
 
 // Генерация массива из объектов фотографий
