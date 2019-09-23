@@ -13,11 +13,10 @@ var pictureList = document.querySelector('.pictures');
 
 // Генерация числа в заданном диапазоне, либо от 0 до указанного значения
 var randomNumber = function (max, min) {
-  if (min) {
-    return Math.floor((Math.random() * ((max + 1) - min)) + min);
-  } else {
-    return Math.floor((Math.random() * (max + 1)));
+  if (min === undefined) {
+    min = 0;
   }
+  return Math.floor((Math.random() * ((max + 1) - min)) + min);
 };
 
 // Получение случайного элемента из массива
@@ -26,11 +25,11 @@ var getRandomArrElement = function (arr) {
 };
 
 // Генерируем объект комментария
-var getComment = function (name, avatarUrl, comment) {
+var getRandomComment = function () {
   var tempObj = {
-    avatar: avatarUrl,
-    message: comment,
-    name: name,
+    avatar: 'img/avatar-' + randomNumber(6, 1) + '.svg',
+    message: getRandomArrElement(AUTHOR_COMMENTS),
+    name: getRandomArrElement(COMMENT_AUTHOR_NAME),
   };
   return tempObj;
 };
@@ -39,14 +38,14 @@ var getComment = function (name, avatarUrl, comment) {
 var getCommentsList = function (commentsCount) {
   var tempArray = [];
   for (var i = 0; i < commentsCount; i++) {
-    tempArray[i] = getComment(getRandomArrElement(COMMENT_AUTHOR_NAME), 'img/avatar-' + randomNumber(6, 1) + '.svg', getRandomArrElement(AUTHOR_COMMENTS));
+    tempArray.push(getRandomComment());
   }
   return tempArray;
 };
 
 
-// Генерация объекта фотографии
-var getPictureItem = function (imgUrl, description, likesCount, comment) {
+// Маппинг объекта фотографии
+var getRandomPictureItem = function (imgUrl, description, likesCount, comment) {
   var tempObj = {
     url: imgUrl,
     description: description,
@@ -60,7 +59,11 @@ var getPictureItem = function (imgUrl, description, likesCount, comment) {
 var getPictureList = function (pictureCount) {
   var tempArray = [];
   for (var i = 1; i <= pictureCount; i++) {
-    tempArray[i - 1] = getPictureItem('photos/' + i + '.jpg', 'Описание фотографии', randomNumber(LIKES_COUNT_MAX, LIKES_COUNT_MIN), getCommentsList(randomNumber(2, 1)));
+    var pictureUrl = 'photos/' + i + '.jpg';
+    var pictureDiscription = 'Описание фотографии';
+    var likesCount = randomNumber(LIKES_COUNT_MAX, LIKES_COUNT_MIN);
+    var pictureComments = getCommentsList(randomNumber(2, 1));
+    tempArray.push(getRandomPictureItem(pictureUrl, pictureDiscription, likesCount, pictureComments));
   }
   return tempArray;
 };
@@ -68,9 +71,10 @@ var getPictureList = function (pictureCount) {
 // Рендер DOM элемента на основе объекта
 var renderPicture = function (pictureItem) {
   var pictureElement = templatePictureItem.cloneNode(true);
+  var pictureElementImg = pictureElement.querySelector('.picture__img');
 
-  pictureElement.querySelector('.picture__img').src = pictureItem.url;
-  pictureElement.querySelector('.picture__img').alt = pictureItem.description;
+  pictureElementImg.src = pictureItem.url;
+  pictureElementImg.alt = pictureItem.description;
   pictureElement.querySelector('.picture__likes').textContent = pictureItem.likes;
   pictureElement.querySelector('.picture__comments').textContent = pictureItem.comments.length;
 
