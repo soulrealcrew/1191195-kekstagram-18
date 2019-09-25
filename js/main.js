@@ -4,15 +4,16 @@ var LIKES_COUNT_MIN = 15;
 var LIKES_COUNT_MAX = 200;
 var PICTURES_COUNT = 25;
 var AUTHOR_COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
-var COMMENT_AUTHOR_NAME = ['Василиса', 'Фатима', 'Лысый', 'Сабрина', 'Вася', 'Ибрагим', 'Бузова', 'M@}{-Ki113r2003', 'Толик', 'Дима', 'Шелдон', 'Тёрк', 'Газаев', 'Бублик', 'Хабиб', 'Захар', 'Гребен', 'Барсик', 'Шарик', 'Тузик', 'Властелин', 'Рыжый', 'Максим', 'Алексей', 'Дмитрий', 'Ахмед', 'Маривана', 'Аркадий', 'Федор', 'Жека', 'Гоша', 'Семён', 'Сизый', 'Екатерина', 'Алиса', 'Карина', 'Смотрящий'];
+var COMMENTS_AUTHOR_NAME = ['Василиса', 'Фатима', 'Лысый', 'Сабрина', 'Вася', 'Ибрагим', 'Бузова', 'M@}{-Ki113r2003', 'Толик', 'Дима', 'Шелдон', 'Тёрк', 'Газаев', 'Бублик', 'Хабиб', 'Захар', 'Гребен', 'Барсик', 'Шарик', 'Тузик', 'Властелин', 'Рыжый', 'Максим', 'Алексей', 'Дмитрий', 'Ахмед', 'Маривана', 'Аркадий', 'Федор', 'Жека', 'Гоша', 'Семён', 'Сизый', 'Екатерина', 'Алиса', 'Карина', 'Смотрящий'];
+var MAX_SHOW_COMMENTS = 5;
 
 // Переменные
 var templatePicture = document.querySelector('#picture');
 var templatePictureItem = templatePicture.content.querySelector('.picture');
 var pictureList = document.querySelector('.pictures');
 var bigPicture = document.querySelector('.big-picture');
-var bigPictureCommentsList = bigPicture.querySelector('.social__comments');
-var bigPictureComment = bigPictureCommentsList.querySelector('.social__comment');
+var socialComments = bigPicture.querySelector('.social__comments');
+var commentElement = socialComments.querySelector('.social__comment');
 
 // Генерация числа в заданном диапазоне, либо от 0 до указанного значения
 var getRandomNumber = function (max, min) {
@@ -32,7 +33,7 @@ var getRandomComment = function () {
   return {
     avatar: 'img/avatar-' + getRandomNumber(6, 1) + '.svg',
     message: getRandomArrElement(AUTHOR_COMMENTS),
-    name: getRandomArrElement(COMMENT_AUTHOR_NAME),
+    name: getRandomArrElement(COMMENTS_AUTHOR_NAME),
   };
 };
 
@@ -47,24 +48,20 @@ var getCommentsData = function (commentsCount) {
 
 
 // Маппинг объекта фотографии
-var getRandomPictureItem = function (imgUrl, description, likesCount, comment) {
+var getRandomPictureItem = function (elementNumber) {
   return {
-    url: imgUrl,
-    description: description,
-    likes: likesCount,
-    comments: comment,
+    url: 'photos/' + elementNumber + '.jpg',
+    description: 'Описание фотографии',
+    likes: getRandomNumber(LIKES_COUNT_MAX, LIKES_COUNT_MIN),
+    comments: getCommentsData(getRandomNumber(2, 1)),
   };
 };
 
 // Генерация массива из объектов фотографий
-var getPictureList = function (pictureCount) {
+var getPicturesList = function (pictureCount) {
   var tempArray = [];
   for (var i = 1; i <= pictureCount; i++) {
-    var pictureUrl = 'photos/' + i + '.jpg';
-    var pictureDiscription = 'Описание фотографии';
-    var likesCount = getRandomNumber(LIKES_COUNT_MAX, LIKES_COUNT_MIN);
-    var pictureComments = getCommentsData(getRandomNumber(2, 1));
-    tempArray.push(getRandomPictureItem(pictureUrl, pictureDiscription, likesCount, pictureComments));
+    tempArray.push(getRandomPictureItem(i));
   }
   return tempArray;
 };
@@ -83,54 +80,52 @@ var renderPicture = function (pictureItem) {
 };
 
 // Заполнение DOM элемента на основе массива
-var renderPictureList = function (photosArray) {
+var renderPicturesList = function (photos) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < photosArray.length; i++) {
-    fragment.appendChild(renderPicture(photosArray[i]));
+  for (var i = 0; i < photos.length; i++) {
+    fragment.appendChild(renderPicture(photos[i]));
   }
   return fragment;
 };
 
 // Получаем массив с фотографиями и коментариями
-var completedPhotoList = getPictureList(PICTURES_COUNT);
+var completedPhotoList = getPicturesList(PICTURES_COUNT);
 
 // Финальная отрисовка
-pictureList.appendChild(renderPictureList(completedPhotoList));
+pictureList.appendChild(renderPicturesList(completedPhotoList));
 
 // Дополнительное задание
 // Собирает DOM элемент одного комментария
 var getCommentElement = function (comment) {
-  var pictureCommentElement = bigPictureComment.cloneNode(true);
-  var pictureCommentElementImg = pictureCommentElement.querySelector('.social__picture');
+  var cloneCommentElement = commentElement.cloneNode(true);
+  var pictureCommentElementImg = cloneCommentElement.querySelector('.social__picture');
 
   pictureCommentElementImg.src = comment.avatar;
   pictureCommentElementImg.alt = comment.name;
-  pictureCommentElement.querySelector('.social__text').textContent = comment.message;
+  cloneCommentElement.querySelector('.social__text').textContent = comment.message;
 
-  return pictureCommentElement;
+  return cloneCommentElement;
 };
 
 // Собирает все DOM-комментарии в один фрагмент для далнейшего рендера
-var getCommentList = function (commentsArray) {
+var getCommentList = function (comments) {
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < commentsArray.length; i++) {
-    fragment.appendChild(getCommentElement(commentsArray[i]));
+  for (var i = 0; i < comments.length; i++) {
+    fragment.appendChild(getCommentElement(comments[i]));
   }
   return fragment;
 };
 
 // Финальный рендер большой картинки с комментариями
 var renderBigPicture = function (pictureItem) {
-  var maxShowComments = 5;
-
   bigPicture.querySelector('.big-picture__img').children[0].src = pictureItem.url;
   bigPicture.querySelector('.likes-count').textContent = pictureItem.likes;
   bigPicture.querySelector('.comments-count').textContent = pictureItem.comments.length;
-  bigPictureCommentsList.innerHTML = '';
-  bigPictureCommentsList.appendChild(getCommentList(pictureItem.comments));
+  socialComments.innerHTML = '';
+  socialComments.appendChild(getCommentList(pictureItem.comments));
 
-  if (pictureItem.comments.length <= maxShowComments) {
+  if (pictureItem.comments.length <= MAX_SHOW_COMMENTS) {
     bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
     bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
   }
