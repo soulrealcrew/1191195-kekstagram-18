@@ -133,9 +133,139 @@ var renderBigPicture = function (pictureItem) {
 
 // Функция показа большой картинки
 var showBigPicture = function (photo) {
-  bigPicture.classList.remove('hidden');
+  // bigPicture.classList.remove('hidden');
   renderBigPicture(photo);
 };
 
 showBigPicture(completedPhotoList[0]);
+
+// Задание 8
+// Переменные необходимые для задания
+
+var imgEditOverlay = document.querySelector('.img-upload__overlay'); // Надо снять класс hidden
+var uploadButton = document.querySelector('#upload-file'); // Кнопка загрузки
+var closeEditButton = document.querySelector('#upload-cancel'); // Кнопка закрытия
+var imgUploadForm = document.querySelector('.img-upload__form'); // Поле формы для ресета
+
+
+var escapeAction = function (tempFunction) {
+  return function (evt) {
+    if (evt.keyCode === 27) {
+      tempFunction();
+    }
+  };
+};
+
+var closeEdit = function () {
+  imgUploadForm.reset();
+  imgEditOverlay.classList.add('hidden');
+  closeEditButton.removeEventListener('click', closeEdit);
+  document.removeEventListener('keydown', onEscEdit);
+};
+
+var openEdit = function () {
+  imgEditOverlay.classList.remove('hidden');
+  closeEditButton.addEventListener('click', closeEdit);
+  document.addEventListener('keydown', onEscEdit);
+};
+
+var onEscEdit = escapeAction(closeEdit);
+uploadButton.addEventListener('change', openEdit);
+
+// Работа с пином
+
+var effectLevel = document.querySelector('.effect-level');
+var effectLevelLine = effectLevel.querySelector('.effect-level__line');
+var effectLevelPin = effectLevelLine.querySelector('.effect-level__pin');
+// var effectLevelDepth = effectLevelLine.querySelector('.effect-level__depth');
+var imgPreview = imgEditOverlay.querySelector('.img-upload__preview').children[0];
+var imgEffectsList = document.querySelector('.effects__list');
+// var effectLevelValue = effectLevel.querySelector('.effect-level__value');
+
+var getPinPercentPos = function (evt, line) {
+  var linePos = line.getBoundingClientRect();
+  var pinPos = evt.target.getBoundingClientRect();
+  var minPinPosition = linePos.x;
+  var currentPinPos = pinPos.x + (pinPos.width / 2);
+  return Math.round((currentPinPos - minPinPosition) / linePos.width * 100);
+
+};
+
+effectLevelPin.addEventListener('mouseup', function (evt) {
+  getPinPercentPos(evt, effectLevelLine);
+});
+
+var getEffectData = function (effect) {
+  var effectsMap = {
+    'none': {
+      'name': '',
+      'measures': '',
+      'minRange': '',
+      'maxRange': '',
+    },
+    'chrome': {
+      'name': 'grayscale',
+      'measures': '',
+      'minRange': 0,
+      'maxRange': 1,
+    },
+    'sepia': {
+      'name': 'sepia',
+      'measures': '',
+      'minRange': 0,
+      'maxRange': 1,
+    },
+    'marvin': {
+      'name': 'invert',
+      'measures': '%',
+      'minRange': 0,
+      'maxRange': 100,
+    },
+    'phobos': {
+      'name': 'blur',
+      'measures': 'px',
+      'minRange': 0,
+      'maxRange': 3,
+    },
+    'heat': {
+      'name': 'brightness',
+      'measures': '',
+      'minRange': 1,
+      'maxRange': 3,
+    },
+  };
+  return effectsMap[effect];
+};
+
+var onClickEffectPreview = function () {
+  // effectLevelValue.reset();
+  setEffect(getCurrentValue(), getCheckedEffect(), imgPreview);
+};
+
+var getCheckedEffect = function () {
+  return imgEffectsList.querySelector('input[name="effect"]:checked').value;
+};
+
+var getCurrentValue = function () {
+  return effectLevel.querySelector('.effect-level__value').value;
+};
+
+var getEffectLevel = function (percent, min, max) {
+  return (((max - min) / 100 * percent) + min);
+};
+
+var getEffect = function (percent, effect) {
+  if (effect.name === '') {
+    return 'none';
+  }
+  var value = getEffectLevel(percent, effect.minRange, effect.maxRange);
+  return effect.name + '(' + value + effect.measures + ')';
+};
+
+var setEffect = function (percent, effect, img) {
+  img.style.filter = getEffect(percent, getEffectData(effect));
+};
+
+imgEffectsList.addEventListener('change', onClickEffectPreview);
+
 
