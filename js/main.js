@@ -140,14 +140,23 @@ var showBigPicture = function (photo) {
 showBigPicture(completedPhotoList[0]);
 
 // Задание 8
-// Переменные необходимые для задания
+// Обработка загрузки изображения и добавление нужных обработчиков
+// Переменные необходимые для работы
+var imgEditOverlay = document.querySelector('.img-upload__overlay');
+var uploadButton = document.querySelector('#upload-file');
+var closeEditButton = document.querySelector('#upload-cancel');
+var imgUploadForm = document.querySelector('.img-upload__form');
+var effectLevel = document.querySelector('.effect-level');
+var effectLevelLine = effectLevel.querySelector('.effect-level__line');
+var effectLevelPin = effectLevelLine.querySelector('.effect-level__pin');
+var effectLevelCompleteLine = effectLevelLine.querySelector('.effect-level__depth');
+var imgPreview = imgEditOverlay.querySelector('.img-upload__preview').children[0];
+var imgEffectsList = document.querySelector('.effects__list');
+var effectLevelValue = effectLevel.querySelector('.effect-level__value');
+var DEFFAULT_PIN_POSITION = 91;
+var DEFFAULT_VALUE = 20;
 
-var imgEditOverlay = document.querySelector('.img-upload__overlay'); // Надо снять класс hidden
-var uploadButton = document.querySelector('#upload-file'); // Кнопка загрузки
-var closeEditButton = document.querySelector('#upload-cancel'); // Кнопка закрытия
-var imgUploadForm = document.querySelector('.img-upload__form'); // Поле формы для ресета
-
-
+// Логика загрузки изображения, открытия окна с эффектами и его закрытия
 var escapeAction = function (tempFunction) {
   return function (evt) {
     if (evt.keyCode === 27) {
@@ -161,41 +170,27 @@ var closeEdit = function () {
   imgEditOverlay.classList.add('hidden');
   closeEditButton.removeEventListener('click', closeEdit);
   document.removeEventListener('keydown', onEscEdit);
+  effectLevelPin.removeEventListener('mousedown', onPinMouseDown);
+  imgEffectsList.removeEventListener('change', onClickEffectPreview);
+  resetPreview();
 };
 
 var openEdit = function () {
   imgEditOverlay.classList.remove('hidden');
   closeEditButton.addEventListener('click', closeEdit);
   document.addEventListener('keydown', onEscEdit);
+  effectLevelPin.addEventListener('mousedown', onPinMouseDown);
+  imgEffectsList.addEventListener('change', onClickEffectPreview);
 };
 
 var onEscEdit = escapeAction(closeEdit);
 uploadButton.addEventListener('change', openEdit);
 
-// Работа с пином
+// Ниже функции получения строки с эффектом, для дальнейшего его присваивания
+// Получение данных необходимых для дальнейшей работы выбранного эффекта
+var getCheckedEffectData = function () {
+  var checkedEffect = imgEffectsList.querySelector('input[name="effect"]:checked').value;
 
-var effectLevel = document.querySelector('.effect-level');
-var effectLevelLine = effectLevel.querySelector('.effect-level__line');
-var effectLevelPin = effectLevelLine.querySelector('.effect-level__pin');
-// var effectLevelDepth = effectLevelLine.querySelector('.effect-level__depth');
-var imgPreview = imgEditOverlay.querySelector('.img-upload__preview').children[0];
-var imgEffectsList = document.querySelector('.effects__list');
-// var effectLevelValue = effectLevel.querySelector('.effect-level__value');
-
-var getPinPercentPos = function (evt, line) {
-  var linePos = line.getBoundingClientRect();
-  var pinPos = evt.target.getBoundingClientRect();
-  var minPinPosition = linePos.x;
-  var currentPinPos = pinPos.x + (pinPos.width / 2);
-  return Math.round((currentPinPos - minPinPosition) / linePos.width * 100);
-
-};
-
-effectLevelPin.addEventListener('mouseup', function (evt) {
-  getPinPercentPos(evt, effectLevelLine);
-});
-
-var getEffectData = function (effect) {
   var effectsMap = {
     'none': {
       'name': '',
@@ -208,52 +203,51 @@ var getEffectData = function (effect) {
       'measures': '',
       'minRange': 0,
       'maxRange': 1,
+      'class': 'effects__preview--chrome',
     },
     'sepia': {
       'name': 'sepia',
       'measures': '',
       'minRange': 0,
       'maxRange': 1,
+      'class': 'effects__preview--sepia',
     },
     'marvin': {
       'name': 'invert',
       'measures': '%',
       'minRange': 0,
       'maxRange': 100,
+      'class': 'effects__preview--marvin',
     },
     'phobos': {
       'name': 'blur',
       'measures': 'px',
       'minRange': 0,
-      'maxRange': 3,
+      'maxRange': 5,
+      'class': 'effects__preview--phobos',
     },
     'heat': {
       'name': 'brightness',
       'measures': '',
       'minRange': 1,
       'maxRange': 3,
+      'class': 'effects__preview--heat',
     },
   };
-  return effectsMap[effect];
+  return effectsMap[checkedEffect];
 };
 
-var onClickEffectPreview = function () {
-  // effectLevelValue.reset();
-  setEffect(getCurrentValue(), getCheckedEffect(), imgPreview);
-};
-
-var getCheckedEffect = function () {
-  return imgEffectsList.querySelector('input[name="effect"]:checked').value;
-};
-
-var getCurrentValue = function () {
+// Вычесляем какое сейчас значение value в инпуте, что-бы на его основе применить необходимый уровень эффекта
+var getEffectLevelValue = function () {
   return effectLevel.querySelector('.effect-level__value').value;
 };
 
+// Функция которая возрвашает процентное соотношение в заданном диапазоне, необходимом для эффекта
 var getEffectLevel = function (percent, min, max) {
   return (((max - min) / 100 * percent) + min);
 };
 
+// Функция получения строки эффекта
 var getEffect = function (percent, effect) {
   if (effect.name === '') {
     return 'none';
@@ -262,10 +256,113 @@ var getEffect = function (percent, effect) {
   return effect.name + '(' + value + effect.measures + ')';
 };
 
-var setEffect = function (percent, effect, img) {
-  img.style.filter = getEffect(percent, getEffectData(effect));
+// Функция присваивания эффекта
+var setEffect = function (percent, effectData, img) {
+  img.style.filter = getEffect(percent, effectData);
 };
 
-imgEffectsList.addEventListener('change', onClickEffectPreview);
+// Функция изменения эффекта при клике на миниатюру
+var changePreviewEffect = function () {
+  var currentEffect = getCheckedEffectData();
+  resetPreview();
+  imgPreview.className = currentEffect.class;
+  setEffect(getEffectLevelValue(), currentEffect, imgPreview);
+};
+
+// Сброс эффектов
+var resetPreview = function () {
+  effectLevelValue.value = DEFFAULT_VALUE;
+  effectLevelPin.style.left = DEFFAULT_PIN_POSITION + 'px';
+  effectLevelCompleteLine.style.width = DEFFAULT_PIN_POSITION + 'px';
+  setEffect(DEFFAULT_VALUE, getCheckedEffectData(), imgPreview);
+};
+
+// Обработчик клика по миниатюре
+var onClickEffectPreview = function () {
+  changePreviewEffect();
+};
+
+// Получение процентного соотношения положения пина, относительно его максимального положения
+var getPinPercentPos = function (position, maxValue) {
+  return position / maxValue * 100;
+};
+
+// Логика работы с пином и изменением эффекта при движении
+var onPinMouseDown = function (evt) {
+  evt.preventDefault();
+  var currentEffect = getCheckedEffectData();
+  var startCoord = evt.ClientX;
+  var pin = evt.target;
+  var line = evt.target.offsetParent;
+  var maxValue = line.offsetWidth;
+
+  var onPinMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+    var shift = startCoord - moveEvt.clientX;
+    startCoord = moveEvt.clientX;
+
+    if (pin.offsetLeft - shift < 0) {
+      pin.style.left = 0;
+      document.removeEventListener('mousemove', onPinMouseMove);
+      document.removeEventListener('mouseup', onPinMouseUp);
+    } else if (pin.offsetLeft - shift > maxValue) {
+      pin.style.left = maxValue + 'px';
+      document.removeEventListener('mousemove', onPinMouseMove);
+      document.removeEventListener('mouseup', onPinMouseUp);
+    } else {
+      pin.style.left = (pin.offsetLeft - shift) + 'px';
+      effectLevelCompleteLine.style.width = pin.offsetLeft + 'px';
+    }
+
+    effectLevelValue.value = getPinPercentPos(pin.offsetLeft, maxValue);
+    setEffect(effectLevelValue.value, currentEffect, imgPreview);
+  };
+
+  var onPinMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', onPinMouseMove);
+    document.removeEventListener('mouseup', onPinMouseUp);
+  };
+
+  document.addEventListener('mousemove', onPinMouseMove);
+  document.addEventListener('mouseup', onPinMouseUp);
+};
+
+// Работа с валидацией хештэгов
 
 
+var hashtagInput = document.querySelector('.text__hashtags');
+var submitButton = document.querySelector('.img-upload__submit');
+
+submitButton.addEventListener('click', function () {
+  checkHashValidity(hashtagInput);
+});
+
+var checkHashValidity = function (input) {
+  input.setCustomValidity('');
+  if (input.value !== '') {
+    var hashtags = input.value.split(' ');
+
+    if (hashtags.length > 5) {
+      input.setCustomValidity('Максимальное допустимое количество хэштегов не должно превышать 5-ти');
+    }
+
+    for (var i = 0; i < hashtags.length; i++) {
+      if (hashtags[i].length > 20) {
+        input.setCustomValidity('Длинна одного хэштега не должна превышать 20 символов');
+      }
+
+      if (hashtags[i].indexOf('#', 1) !== -1) {
+        input.setCustomValidity('Вы забыли пробел между хэштегами');
+      }
+
+      if (hashtags[i][0] !== '#') {
+        input.setCustomValidity('Используйте символ "#" для указания хэштега');
+      }
+
+      if (hashtags.indexOf(hashtags[i], i + 1) !== -1) {
+        input.setCustomValidity('Нельзя использовать два одинаковых хэштега');
+      }
+    }
+  }
+};
