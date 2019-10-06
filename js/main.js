@@ -159,7 +159,7 @@ var DEFFAULT_VALUE = 20;
 // Логика загрузки изображения, открытия окна с эффектами и его закрытия
 var escapeAction = function (tempFunction) {
   return function (evt) {
-    if (evt.keyCode === 27) {
+    if (evt.keyCode === 27 && evt.target !== hashtagInput) {
       tempFunction();
     }
   };
@@ -172,6 +172,7 @@ var closeEdit = function () {
   document.removeEventListener('keydown', onEscEdit);
   effectLevelPin.removeEventListener('mousedown', onPinMouseDown);
   imgEffectsList.removeEventListener('change', onClickEffectPreview);
+  submitButton.removeListener('click', onClickSubmitButton);
   resetPreview();
 };
 
@@ -181,6 +182,7 @@ var openEdit = function () {
   document.addEventListener('keydown', onEscEdit);
   effectLevelPin.addEventListener('mousedown', onPinMouseDown);
   imgEffectsList.addEventListener('change', onClickEffectPreview);
+  submitButton.addEventListener('click', onClickSubmitButton);
 };
 
 var onEscEdit = escapeAction(closeEdit);
@@ -334,9 +336,9 @@ var onPinMouseDown = function (evt) {
 var hashtagInput = document.querySelector('.text__hashtags');
 var submitButton = document.querySelector('.img-upload__submit');
 
-submitButton.addEventListener('click', function () {
+var onClickSubmitButton = function () {
   checkHashValidity(hashtagInput);
-});
+};
 
 var checkHashValidity = function (input) {
   input.setCustomValidity('');
