@@ -337,33 +337,88 @@ var hashtagInput = document.querySelector('.text__hashtags');
 var submitButton = document.querySelector('.img-upload__submit');
 
 var onClickSubmitButton = function () {
-  checkHashValidity(hashtagInput);
+  setHashCustomValidity(hashtagInput);
+};
+
+var isHashTooLong = function (hash) {
+  return (hash.length > 20);
+};
+
+var isHashHasSpace = function (hash) {
+  return (hash.indexOf('#', 1) !== -1);
+};
+
+var isHashHasTag = function (hash) {
+  return (hash[0] !== '#');
+};
+
+
+var isHashRepeat = function (array, currentHash, hashIndex) {
+  return (array.indexOf(currentHash, hashIndex + 1) !== -1);
+};
+
+var isHashEmpty = function (hash) {
+  return (hash.length === 1 && hash[0] === '#');
 };
 
 var checkHashValidity = function (input) {
-  input.setCustomValidity('');
-  if (input.value !== '') {
-    var hashs = input.value.split(' ');
+  var validity = {
+    hashToLong: false,
+    hashHasSpace: false,
+    hashHasTag: false,
+    tooMushHashs: false,
+    hashIsRepeat: false,
+    hashIsEmpty: false,
+  };
 
-    if (hashs.length > 5) {
-      input.setCustomValidity('Максимальное допустимое количество хэштегов не должно превышать 5-ти');
+  var hashs = input.value.split(' ');
+
+  if (hashs.length > 5) {
+    validity.tooMushHashs = true;
+  }
+
+  for (var hashIndex = 0; hashIndex < hashs.length; hashIndex++) {
+    var currentHash = hashs[hashIndex];
+    if (isHashTooLong(currentHash)) {
+      validity.hashToLong = true;
+    }
+    if (isHashHasSpace(currentHash)) {
+      validity.hashHasSpace = true;
     }
 
-    for (var currentHash = 0; currentHash < hashs.length; currentHash++) {
-      if (hashs[currentHash].length > 20) {
-        input.setCustomValidity('Длинна одного хэштега не должна превышать 20 символов');
-      }
+    if (isHashHasTag(currentHash)) {
+      validity.hashHasTag = true;
+    }
 
-      if (hashs[currentHash].indexOf('#', 1) !== -1) {
-        input.setCustomValidity('Вы забыли пробел между хэштегами');
-      }
+    if (isHashRepeat(hashs, currentHash, hashIndex)) {
+      validity.hashIsRepeat = true;
+    }
+    if (isHashEmpty(currentHash)) {
+      validity.hashIsEmpty = true;
+    }
+  }
 
-      if (hashs[currentHash][0] !== '#') {
-        input.setCustomValidity('Используйте символ "#" для указания хэштега');
-      }
+  return validity;
+};
 
-      if (hashs.indexOf(hashs[currentHash], currentHash + 1) !== -1) {
-        input.setCustomValidity('Нельзя использовать два одинаковых хэштега');
+var setHashCustomValidity = function (input) {
+  input.setCustomValidity('');
+
+  var localesMap = {
+    hashToLong: 'Длинна одного хэштега не должна превышать 20 символов',
+    hashHasSpace: 'Вы забыли пробел между хэштегами',
+    hashHasTag: 'Используйте символ "#" для указания хэштега',
+    tooMushHashs: 'Максимальное допустимое количество хэштегов не должно превышать 5-ти',
+    hashIsRepeat: 'Нельзя использовать два одинаковых хэштега',
+    hashIsEmpty: 'У хэштега должно быть название',
+  };
+
+  if (input.value !== '') {
+    var validity = checkHashValidity(input);
+
+    for (var key in validity) {
+      if (validity[key] && localesMap[key]) {
+        input.setCustomValidity(localesMap[key]);
       }
     }
   }
