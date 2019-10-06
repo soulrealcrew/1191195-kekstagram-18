@@ -343,26 +343,26 @@ var onClickSubmitButton = function () {
 var checkHashValidity = function (input) {
   input.setCustomValidity('');
   if (input.value !== '') {
-    var hashtags = input.value.split(' ');
+    var hashs = input.value.split(' ');
 
-    if (hashtags.length > 5) {
+    if (hashs.length > 5) {
       input.setCustomValidity('Максимальное допустимое количество хэштегов не должно превышать 5-ти');
     }
 
-    for (var i = 0; i < hashtags.length; i++) {
-      if (hashtags[i].length > 20) {
+    for (var currentHash = 0; currentHash < hashs.length; currentHash++) {
+      if (hashs[currentHash].length > 20) {
         input.setCustomValidity('Длинна одного хэштега не должна превышать 20 символов');
       }
 
-      if (hashtags[i].indexOf('#', 1) !== -1) {
+      if (hashs[currentHash].indexOf('#', 1) !== -1) {
         input.setCustomValidity('Вы забыли пробел между хэштегами');
       }
 
-      if (hashtags[i][0] !== '#') {
+      if (hashs[currentHash][0] !== '#') {
         input.setCustomValidity('Используйте символ "#" для указания хэштега');
       }
 
-      if (hashtags.indexOf(hashtags[i], i + 1) !== -1) {
+      if (hashs.indexOf(hashs[currentHash], currentHash + 1) !== -1) {
         input.setCustomValidity('Нельзя использовать два одинаковых хэштега');
       }
     }
