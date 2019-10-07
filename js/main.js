@@ -6,6 +6,10 @@ var PICTURES_COUNT = 25;
 var AUTHOR_COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 var COMMENT_AUTHOR_NAMES = ['Василиса', 'Фатима', 'Лысый', 'Сабрина', 'Вася', 'Ибрагим', 'Бузова', 'M@}{-Ki113r2003', 'Толик', 'Дима', 'Шелдон', 'Тёрк', 'Газаев', 'Бублик', 'Хабиб', 'Захар', 'Гребен', 'Барсик', 'Шарик', 'Тузик', 'Властелин', 'Рыжый', 'Максим', 'Алексей', 'Дмитрий', 'Ахмед', 'Маривана', 'Аркадий', 'Федор', 'Жека', 'Гоша', 'Семён', 'Сизый', 'Екатерина', 'Алиса', 'Карина', 'Смотрящий'];
 var MAX_SHOW_COMMENTS = 5;
+var ESC_KEY = 27;
+var MAX_HASH_LENGTH = 20;
+var MAX_HASH_COUNT = 5;
+var HASHTAG_SYMBOL = '#';
 
 // Переменные
 var templatePicture = document.querySelector('#picture');
@@ -142,34 +146,32 @@ showBigPicture(completedPhotoList[0]);
 // Задание 8
 // Обработка загрузки изображения и добавление нужных обработчиков
 // Переменные необходимые для работы
-var imgEditOverlay = document.querySelector('.img-upload__overlay');
-var uploadButton = document.querySelector('#upload-file');
-var closeEditButton = document.querySelector('#upload-cancel');
 var imgUploadForm = document.querySelector('.img-upload__form');
-var effectLevel = document.querySelector('.effect-level');
+var imgEditOverlay = imgUploadForm.querySelector('.img-upload__overlay');
+var uploadButton = imgUploadForm.querySelector('#upload-file');
+var closeEditButton = imgUploadForm.querySelector('#upload-cancel');
+var effectLevel = imgUploadForm.querySelector('.effect-level');
 var effectLevelLine = effectLevel.querySelector('.effect-level__line');
 var effectLevelPin = effectLevelLine.querySelector('.effect-level__pin');
 var effectLevelCompleteLine = effectLevelLine.querySelector('.effect-level__depth');
 var imgPreview = imgEditOverlay.querySelector('.img-upload__preview').children[0];
-var imgEffectsList = document.querySelector('.effects__list');
+var imgEffectsList = imgUploadForm.querySelector('.effects__list');
 var effectLevelValue = effectLevel.querySelector('.effect-level__value');
 var DEFFAULT_PIN_POSITION = 91;
 var DEFFAULT_VALUE = 20;
 
 // Логика загрузки изображения, открытия окна с эффектами и его закрытия
-var escapeAction = function (tempFunction) {
-  return function (evt) {
-    if (evt.keyCode === 27 && evt.target !== hashtagInput) {
-      tempFunction();
-    }
-  };
+var onEscButtomCloseEdit = function (evt) {
+  if (evt.keyCode === ESC_KEY && evt.target !== hashtagInput) {
+    closeEdit();
+  }
 };
 
 var closeEdit = function () {
   imgUploadForm.reset();
   imgEditOverlay.classList.add('hidden');
   closeEditButton.removeEventListener('click', closeEdit);
-  document.removeEventListener('keydown', onEscEdit);
+  document.removeEventListener('keydown', onEscButtomCloseEdit);
   effectLevelPin.removeEventListener('mousedown', onPinMouseDown);
   imgEffectsList.removeEventListener('change', onClickEffectPreview);
   submitButton.removeListener('click', onClickSubmitButton);
@@ -179,13 +181,12 @@ var closeEdit = function () {
 var openEdit = function () {
   imgEditOverlay.classList.remove('hidden');
   closeEditButton.addEventListener('click', closeEdit);
-  document.addEventListener('keydown', onEscEdit);
+  document.addEventListener('keydown', onEscButtomCloseEdit);
   effectLevelPin.addEventListener('mousedown', onPinMouseDown);
   imgEffectsList.addEventListener('change', onClickEffectPreview);
   submitButton.addEventListener('click', onClickSubmitButton);
 };
 
-var onEscEdit = escapeAction(closeEdit);
 uploadButton.addEventListener('change', openEdit);
 
 // Ниже функции получения строки с эффектом, для дальнейшего его присваивания
@@ -333,32 +334,36 @@ var onPinMouseDown = function (evt) {
 // Работа с валидацией хештэгов
 
 
-var hashtagInput = document.querySelector('.text__hashtags');
-var submitButton = document.querySelector('.img-upload__submit');
+var hashtagInput = imgUploadForm.querySelector('.text__hashtags');
+var submitButton = imgUploadForm.querySelector('.img-upload__submit');
 
 var onClickSubmitButton = function () {
   setHashCustomValidity(hashtagInput);
 };
 
 var isHashTooLong = function (hash) {
-  return (hash.length > 20);
+  return hash.length > MAX_HASH_LENGTH;
 };
 
 var isHashHasSpace = function (hash) {
-  return (hash.indexOf('#', 1) !== -1);
+  return (hash.indexOf(HASHTAG_SYMBOL, 1) !== -1);
 };
 
 var isHashHasTag = function (hash) {
-  return (hash[0] !== '#');
+  return hash[0] !== HASHTAG_SYMBOL;
 };
 
 
-var isHashRepeat = function (array, currentHash, hashIndex) {
+var isHashRepeat = function (currentHash, hashIndex, array) {
   return (array.indexOf(currentHash, hashIndex + 1) !== -1);
 };
 
 var isHashEmpty = function (hash) {
-  return (hash.length === 1 && hash[0] === '#');
+  return (hash.length === 1 && hash[0] === HASHTAG_SYMBOL);
+};
+
+var isTooMuchHash = function (array) {
+  return array.length > MAX_HASH_COUNT;
 };
 
 var checkHashValidity = function (input) {
@@ -373,7 +378,7 @@ var checkHashValidity = function (input) {
 
   var hashs = input.value.split(' ');
 
-  if (hashs.length > 5) {
+  if (isTooMuchHash(hashs)) {
     validity.tooMushHashs = true;
   }
 
@@ -390,7 +395,7 @@ var checkHashValidity = function (input) {
       validity.hashHasTag = true;
     }
 
-    if (isHashRepeat(hashs, currentHash, hashIndex)) {
+    if (isHashRepeat(currentHash, hashIndex, hashs)) {
       validity.hashIsRepeat = true;
     }
     if (isHashEmpty(currentHash)) {
