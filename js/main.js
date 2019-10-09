@@ -73,7 +73,7 @@ var getPicturesList = function (pictureCount) {
 };
 
 // Рендер DOM элемента на основе объекта
-var renderPicture = function (pictureItem) {
+var renderPicture = function (pictureItem, index) {
   var pictureElement = templatePictureItem.cloneNode(true);
   var pictureElementImg = pictureElement.querySelector('.picture__img');
 
@@ -81,6 +81,7 @@ var renderPicture = function (pictureItem) {
   pictureElementImg.alt = pictureItem.description;
   pictureElement.querySelector('.picture__likes').textContent = pictureItem.likes;
   pictureElement.querySelector('.picture__comments').textContent = pictureItem.comments.length;
+  pictureElementImg.setAttribute('data-index', index);
 
   return pictureElement;
 };
@@ -89,7 +90,7 @@ var renderPicture = function (pictureItem) {
 var renderPicturesList = function (photos) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < photos.length; i++) {
-    fragment.appendChild(renderPicture(photos[i]));
+    fragment.appendChild(renderPicture(photos[i], i));
   }
   return fragment;
 };
@@ -139,19 +140,9 @@ var renderBigPicture = function (pictureItem) {
 
 // Функция показа большой картинки
 
-
-var getPictureData = function (picturesMap, picture) {
-  var pictureUrl = picture.getAttribute('src');
-  for (var i = 0; i < picturesMap.length; i++) {
-    if (picturesMap[i].url === pictureUrl) {
-      return picturesMap[i];
-    }
-  }
-  return '';
-};
-
 var showBigPicture = function (picture) {
-  var pictureData = getPictureData(completedPhotoList, picture);
+  var pictureIndex = picture.getAttribute('data-index');
+  var pictureData = completedPhotoList[pictureIndex];
   renderBigPicture(pictureData);
   bigPicture.classList.remove('hidden');
   closeBigPictureButton.addEventListener('click', onCloseBigPicture);
@@ -165,7 +156,8 @@ var onClickPreviewPicture = function (evt) {
 };
 
 var onEnterPreviewPicture = function (evt) {
-  if (evt.keyCode === ENTER_KEY && evt.target.children[0].src) {
+  var imgItem = evt.target.children[0];
+  if (evt.keyCode === ENTER_KEY && imgItem.src) {
     showBigPicture(evt.target.children[0]);
   }
 };
