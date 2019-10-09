@@ -7,6 +7,7 @@ var AUTHOR_COMMENTS = ['Всё отлично!', 'В целом всё непл�
 var COMMENT_AUTHOR_NAMES = ['Василиса', 'Фатима', 'Лысый', 'Сабрина', 'Вася', 'Ибрагим', 'Бузова', 'M@}{-Ki113r2003', 'Толик', 'Дима', 'Шелдон', 'Тёрк', 'Газаев', 'Бублик', 'Хабиб', 'Захар', 'Гребен', 'Барсик', 'Шарик', 'Тузик', 'Властелин', 'Рыжый', 'Максим', 'Алексей', 'Дмитрий', 'Ахмед', 'Маривана', 'Аркадий', 'Федор', 'Жека', 'Гоша', 'Семён', 'Сизый', 'Екатерина', 'Алиса', 'Карина', 'Смотрящий'];
 var MAX_SHOW_COMMENTS = 5;
 var ESC_KEY = 27;
+var ENTER_KEY = 13;
 var MAX_HASH_LENGTH = 20;
 var MAX_HASH_COUNT = 5;
 var HASHTAG_SYMBOL = '#';
@@ -18,6 +19,7 @@ var pictureList = document.querySelector('.pictures');
 var bigPicture = document.querySelector('.big-picture');
 var socialComments = bigPicture.querySelector('.social__comments');
 var commentElement = socialComments.querySelector('.social__comment');
+var closeBigPictureButton = bigPicture.querySelector('.big-picture__cancel');
 
 // Генерация числа в заданном диапазоне, либо от 0 до указанного значения
 var getRandomNumber = function (max, min) {
@@ -71,7 +73,7 @@ var getPicturesList = function (pictureCount) {
 };
 
 // Рендер DOM элемента на основе объекта
-var renderPicture = function (pictureItem) {
+var renderPicture = function (pictureItem, index) {
   var pictureElement = templatePictureItem.cloneNode(true);
   var pictureElementImg = pictureElement.querySelector('.picture__img');
 
@@ -79,6 +81,7 @@ var renderPicture = function (pictureItem) {
   pictureElementImg.alt = pictureItem.description;
   pictureElement.querySelector('.picture__likes').textContent = pictureItem.likes;
   pictureElement.querySelector('.picture__comments').textContent = pictureItem.comments.length;
+  pictureElementImg.setAttribute('data-index', index);
 
   return pictureElement;
 };
@@ -87,7 +90,7 @@ var renderPicture = function (pictureItem) {
 var renderPicturesList = function (photos) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < photos.length; i++) {
-    fragment.appendChild(renderPicture(photos[i]));
+    fragment.appendChild(renderPicture(photos[i], i));
   }
   return fragment;
 };
@@ -136,12 +139,43 @@ var renderBigPicture = function (pictureItem) {
 };
 
 // Функция показа большой картинки
-var showBigPicture = function (photo) {
-  // bigPicture.classList.remove('hidden');
-  renderBigPicture(photo);
+
+var showBigPicture = function (picture) {
+  var pictureIndex = picture.getAttribute('data-index');
+  var pictureData = completedPhotoList[pictureIndex];
+  renderBigPicture(pictureData);
+  bigPicture.classList.remove('hidden');
+  closeBigPictureButton.addEventListener('click', onCloseBigPicture);
+  document.addEventListener('keydown', onEscButtomClosePicture);
 };
 
-showBigPicture(completedPhotoList[0]);
+var onClickPreviewPicture = function (evt) {
+  if (evt.target.src) {
+    showBigPicture(evt.target);
+  }
+};
+
+var onEnterPreviewPicture = function (evt) {
+  var imgItem = evt.target.children[0];
+  if (evt.keyCode === ENTER_KEY && imgItem.src) {
+    showBigPicture(evt.target.children[0]);
+  }
+};
+
+var onCloseBigPicture = function () {
+  bigPicture.classList.add('hidden');
+  closeBigPictureButton.removeEventListener('click', onCloseBigPicture);
+  document.removeEventListener('keydown', onEscButtomClosePicture);
+};
+
+var onEscButtomClosePicture = function (evt) {
+  if (evt.keyCode === ESC_KEY) {
+    onCloseBigPicture();
+  }
+};
+
+pictureList.addEventListener('click', onClickPreviewPicture);
+pictureList.addEventListener('keydown', onEnterPreviewPicture);
 
 // Задание 8
 // Обработка загрузки изображения и добавление нужных обработчиков
@@ -157,12 +191,15 @@ var effectLevelCompleteLine = effectLevelLine.querySelector('.effect-level__dept
 var imgPreview = imgEditOverlay.querySelector('.img-upload__preview').children[0];
 var imgEffectsList = imgUploadForm.querySelector('.effects__list');
 var effectLevelValue = effectLevel.querySelector('.effect-level__value');
+var hashtagInput = imgUploadForm.querySelector('.text__hashtags');
+var submitButton = imgUploadForm.querySelector('.img-upload__submit');
+var commentInput = imgUploadForm.querySelector('.text__description');
 var DEFFAULT_PIN_POSITION = 91;
 var DEFFAULT_VALUE = 20;
 
 // Логика загрузки изображения, открытия окна с эффектами и его закрытия
 var onEscButtomCloseEdit = function (evt) {
-  if (evt.keyCode === ESC_KEY && evt.target !== hashtagInput) {
+  if (evt.keyCode === ESC_KEY && evt.target !== hashtagInput && evt.target !== commentInput) {
     closeEdit();
   }
 };
@@ -174,7 +211,7 @@ var closeEdit = function () {
   document.removeEventListener('keydown', onEscButtomCloseEdit);
   effectLevelPin.removeEventListener('mousedown', onPinMouseDown);
   imgEffectsList.removeEventListener('change', onClickEffectPreview);
-  submitButton.removeListener('click', onClickSubmitButton);
+  submitButton.removeEventListener('click', onClickSubmitButton);
   resetPreview();
 };
 
@@ -332,10 +369,6 @@ var onPinMouseDown = function (evt) {
 };
 
 // Работа с валидацией хештэгов
-
-
-var hashtagInput = imgUploadForm.querySelector('.text__hashtags');
-var submitButton = imgUploadForm.querySelector('.img-upload__submit');
 
 var onClickSubmitButton = function () {
   setHashCustomValidity(hashtagInput);
