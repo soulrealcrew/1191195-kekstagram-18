@@ -8,6 +8,7 @@
     effectLevelCompleteLine: window.util.imgUploadForm.querySelector('.effect-level__depth'),
     DEFFAULT_PIN_POSITION: 91,
     DEFFAULT_VALUE: 20,
+
   };
 
   var imgEditOverlay = window.util.imgUploadForm.querySelector('.img-upload__overlay');
@@ -18,7 +19,7 @@
   var commentInput = window.util.imgUploadForm.querySelector('.text__description');
 
   var onEscButtomCloseEdit = function (evt) {
-    if (evt.keyCode === window.ESC_KEY && evt.target !== hashtagInput && evt.target !== commentInput) {
+    if (evt.keyCode === window.util.ESC_KEY && evt.target !== hashtagInput && evt.target !== commentInput) {
       closeEdit();
     }
   };
