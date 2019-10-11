@@ -80,13 +80,13 @@
 
     changePreviewEffect: function () {
       var currentEffect = window.effect.getCheckedEffectData();
-      window.effect.resetPreview();
+      window.effect.resetEffect();
       window.edit.imgPreview.className = currentEffect.class;
       window.effect.setEffect(window.effect.getEffectLevelValue(), currentEffect, window.edit.imgPreview);
     },
 
     // Сброс эффектов
-    resetPreview: function () {
+    resetEffect: function () {
       effectLevelValue.value = window.edit.DEFFAULT_VALUE;
       window.edit.effectLevelPin.style.left = window.edit.DEFFAULT_PIN_POSITION + 'px';
       window.edit.effectLevelCompleteLine.style.width = window.edit.DEFFAULT_PIN_POSITION + 'px';

@@ -6,7 +6,7 @@
   var getPinPercentPos = function (position, maxValue) {
     return position / maxValue * 100;
   };
-  // Логика работы с пином и изменением эффекта при движении
+  // Логика работы с пином и изменением эффекта при движении пина
   window.slider = {
     onPinMouseDown: function (evt) {
       evt.preventDefault();

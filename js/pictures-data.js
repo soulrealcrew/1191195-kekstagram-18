@@ -40,6 +40,8 @@
     return tempArray;
   };
 
-  window.data.pictureListData = getPicturesList(PICTURES_COUNT);
+  window.data = {
+    pictureListData: getPicturesList(PICTURES_COUNT),
+  };
 
 })();
