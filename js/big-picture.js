@@ -47,7 +47,7 @@
 
   var showBigPicture = function (picture) {
     var pictureIndex = picture.getAttribute('data-index');
-    var pictureData = window.pictureListData[pictureIndex];
+    var pictureData = window.data.pictureListData[pictureIndex];
     renderBigPicture(pictureData);
     bigPicture.classList.remove('hidden');
     closeBigPictureButton.addEventListener('click', onCloseBigPicture);
