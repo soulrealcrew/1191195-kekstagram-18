@@ -69,28 +69,29 @@
 
     return validity;
   };
+  window.hashtag = {
+    setHashCustomValidity: function (input) {
+      input.setCustomValidity('');
 
-  window.setHashCustomValidity = function (input) {
-    input.setCustomValidity('');
+      var localesMap = {
+        hashToLong: 'Длинна одного хэштега не должна превышать 20 символов',
+        hashHasSpace: 'Вы забыли пробел между хэштегами',
+        hashHasTag: 'Используйте символ "#" для указания хэштега',
+        tooMushHashs: 'Максимальное допустимое количество хэштегов не должно превышать 5-ти',
+        hashIsRepeat: 'Нельзя использовать два одинаковых хэштега',
+        hashIsEmpty: 'У хэштега должно быть название',
+      };
 
-    var localesMap = {
-      hashToLong: 'Длинна одного хэштега не должна превышать 20 символов',
-      hashHasSpace: 'Вы забыли пробел между хэштегами',
-      hashHasTag: 'Используйте символ "#" для указания хэштега',
-      tooMushHashs: 'Максимальное допустимое количество хэштегов не должно превышать 5-ти',
-      hashIsRepeat: 'Нельзя использовать два одинаковых хэштега',
-      hashIsEmpty: 'У хэштега должно быть название',
-    };
+      if (input.value !== '') {
+        var validity = checkHashValidity(input);
 
-    if (input.value !== '') {
-      var validity = checkHashValidity(input);
-
-      for (var key in validity) {
-        if (validity[key] && localesMap[key]) {
-          input.setCustomValidity(localesMap[key]);
+        for (var key in validity) {
+          if (validity[key] && localesMap[key]) {
+            input.setCustomValidity(localesMap[key]);
+          }
         }
       }
-    }
+    },
   };
 
 })();

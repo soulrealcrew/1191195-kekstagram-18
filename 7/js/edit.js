@@ -28,7 +28,7 @@
   };
 
   var onClickSubmitButton = function () {
-    window.setHashCustomValidity(hashtagInput);
+    window.hashtag.setHashCustomValidity(hashtagInput);
   };
 
   var closeEdit = function () {
@@ -36,18 +36,18 @@
     imgEditOverlay.classList.add('hidden');
     closeEditButton.removeEventListener('click', closeEdit);
     document.removeEventListener('keydown', onEscButtomCloseEdit);
-    window.edit.effectLevelPin.removeEventListener('mousedown', window.onPinMouseDown);
+    window.edit.effectLevelPin.removeEventListener('mousedown', window.slider.onPinMouseDown);
     imgEffectsList.removeEventListener('change', onClickEffectPreview);
     submitButton.removeEventListener('click', onClickSubmitButton);
     window.util.pictureList.addEventListener('keydown', window.bigPicture.onEnterPreviewPicture);
     window.effect.resetEffect();
   };
 
-  window.openEdit = function () {
+  window.edit.openEdit = function () {
     imgEditOverlay.classList.remove('hidden');
     closeEditButton.addEventListener('click', closeEdit);
     document.addEventListener('keydown', onEscButtomCloseEdit);
-    window.edit.effectLevelPin.addEventListener('mousedown', window.onPinMouseDown);
+    window.edit.effectLevelPin.addEventListener('mousedown', window.slider.onPinMouseDown);
     imgEffectsList.addEventListener('change', onClickEffectPreview);
     submitButton.addEventListener('click', onClickSubmitButton);
     window.util.pictureList.removeEventListener('keydown', window.bigPicture.onEnterPreviewPicture);
