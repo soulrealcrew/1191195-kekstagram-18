@@ -40,7 +40,7 @@
     window.edit.effectLevelPin.removeEventListener('mousedown', window.slider.onPinMouseDown);
     imgEffectsList.removeEventListener('change', onClickEffectPreview);
     submitButton.removeEventListener('click', onClickSubmitButton);
-    window.util.pictureList.addEventListener('keydown', window.bigPicture.onEnterPreviewPicture);
+    window.util.pictureList.addEventListener('keydown', window.fullsize.onEnterPreviewPicture);
     window.effect.resetEffect();
   };
 
@@ -51,7 +51,7 @@
     window.edit.effectLevelPin.addEventListener('mousedown', window.slider.onPinMouseDown);
     imgEffectsList.addEventListener('change', onClickEffectPreview);
     submitButton.addEventListener('click', onClickSubmitButton);
-    window.util.pictureList.removeEventListener('keydown', window.bigPicture.onEnterPreviewPicture);
+    window.util.pictureList.removeEventListener('keydown', window.fullsize.onEnterPreviewPicture);
   };
 
 })();
