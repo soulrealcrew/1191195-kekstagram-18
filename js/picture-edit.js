@@ -1,6 +1,15 @@
 'use strict';
 // Модуль работы с окном редактирования изображения
 (function () {
+  var pictureList = document.querySelector('.pictures');
+  var uploadPopup = document.querySelector('.img-upload__form');
+  var imgEditOverlay = uploadPopup.querySelector('.img-upload__overlay');
+  var submitButton = uploadPopup.querySelector('.img-upload__submit');
+  var closeEditButton = uploadPopup.querySelector('#upload-cancel');
+  var imgEffectsList = uploadPopup.querySelector('.effects__list');
+  var hashtagInput = uploadPopup.querySelector('.text__hashtags');
+  var commentInput = uploadPopup.querySelector('.text__description');
+
   window.edit = {
     imgPreview: uploadPopup.querySelector('.img-upload__preview').children[0],
     effectLevelValue: uploadPopup.querySelector('.effect-level__value'),
@@ -10,15 +19,6 @@
     DEFFAULT_VALUE: 20,
 
   };
-
-  var pictureList = document.querySelector('.pictures');
-  var uploadPopup = document.querySelector('.img-upload__form');
-  var imgEditOverlay = uploadPopup.querySelector('.img-upload__overlay');
-  var submitButton = uploadPopup.querySelector('.img-upload__submit');
-  var closeEditButton = uploadPopup.querySelector('#upload-cancel');
-  var imgEffectsList = uploadPopup.querySelector('.effects__list');
-  var hashtagInput = uploadPopup.querySelector('.text__hashtags');
-  var commentInput = uploadPopup.querySelector('.text__description');
 
   var onEscButtomCloseEdit = function (evt) {
     if (evt.keyCode === window.util.ESC_KEY && evt.target !== hashtagInput && evt.target !== commentInput) {
@@ -30,7 +30,8 @@
     window.effect.changePreviewEffect();
   };
 
-  var onClickSubmitButton = function () {
+  var onClickSubmitButton = function (evt) {
+    evt.preventDefault();
     window.hashtag.setHashCustomValidity(hashtagInput);
   };
 
@@ -55,5 +56,6 @@
     submitButton.addEventListener('click', onClickSubmitButton);
     pictureList.removeEventListener('keydown', window.fullsize.onEnterPreviewPicture);
   };
+
 
 })();

@@ -5,7 +5,7 @@ var pictureList = document.querySelector('.pictures');
 
 var onSuccessData = function (data) {
   window.util.pictureListData = data;
-  window.util.pictureList.appendChild(window.gallery.renderPicturesList(data));
+  pictureList.appendChild(window.gallery.renderPicturesList(data));
 };
 
 var onErrorData = function (errorLog) {
