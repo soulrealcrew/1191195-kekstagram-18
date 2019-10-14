@@ -1,9 +1,10 @@
 'use strict';
 // Модуль работы с эффектом
 (function () {
-  var imgEffectsList = window.util.imgUploadForm.querySelector('.effects__list');
-  var effectLevel = window.util.imgUploadForm.querySelector('.effect-level');
-  var effectLevelValue = window.util.imgUploadForm.querySelector('.effect-level__value');
+  var uploadPopup = document.querySelector('.img-upload__form');
+  var imgEffectsList = uploadPopup.querySelector('.effects__list');
+  var effectLevel = uploadPopup.querySelector('.effect-level');
+  var effectLevelValue = uploadPopup.querySelector('.effect-level__value');
 
   // Функция которая возрвашает процентное соотношение в заданном диапазоне, необходимом для эффекта
   var getEffectLevel = function (percent, min, max) {

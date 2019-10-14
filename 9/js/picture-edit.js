@@ -1,22 +1,24 @@
 'use strict';
 // Модуль работы с окном редактирования изображения
 (function () {
+  var pictureList = document.querySelector('.pictures');
+  var uploadPopup = document.querySelector('.img-upload__form');
+  var imgEditOverlay = uploadPopup.querySelector('.img-upload__overlay');
+  var submitButton = uploadPopup.querySelector('.img-upload__submit');
+  var closeEditButton = uploadPopup.querySelector('#upload-cancel');
+  var imgEffectsList = uploadPopup.querySelector('.effects__list');
+  var hashtagInput = uploadPopup.querySelector('.text__hashtags');
+  var commentInput = uploadPopup.querySelector('.text__description');
+
   window.edit = {
-    imgPreview: window.util.imgUploadForm.querySelector('.img-upload__preview').children[0],
-    effectLevelValue: window.util.imgUploadForm.querySelector('.effect-level__value'),
-    effectLevelPin: window.util.imgUploadForm.querySelector('.effect-level__pin'),
-    effectLevelCompleteLine: window.util.imgUploadForm.querySelector('.effect-level__depth'),
+    imgPreview: uploadPopup.querySelector('.img-upload__preview').children[0],
+    effectLevelValue: uploadPopup.querySelector('.effect-level__value'),
+    effectLevelPin: uploadPopup.querySelector('.effect-level__pin'),
+    effectLevelCompleteLine: uploadPopup.querySelector('.effect-level__depth'),
     DEFFAULT_PIN_POSITION: 91,
     DEFFAULT_VALUE: 20,
 
   };
-
-  var imgEditOverlay = window.util.imgUploadForm.querySelector('.img-upload__overlay');
-  var submitButton = window.util.imgUploadForm.querySelector('.img-upload__submit');
-  var closeEditButton = window.util.imgUploadForm.querySelector('#upload-cancel');
-  var imgEffectsList = window.util.imgUploadForm.querySelector('.effects__list');
-  var hashtagInput = window.util.imgUploadForm.querySelector('.text__hashtags');
-  var commentInput = window.util.imgUploadForm.querySelector('.text__description');
 
   var onEscButtomCloseEdit = function (evt) {
     if (evt.keyCode === window.util.ESC_KEY && evt.target !== hashtagInput && evt.target !== commentInput) {
@@ -40,7 +42,7 @@
     window.edit.effectLevelPin.removeEventListener('mousedown', window.slider.onPinMouseDown);
     imgEffectsList.removeEventListener('change', onClickEffectPreview);
     submitButton.removeEventListener('click', onClickSubmitButton);
-    window.util.pictureList.addEventListener('keydown', window.fullsize.onEnterPreviewPicture);
+    pictureList.addEventListener('keydown', window.fullsize.onEnterPreviewPicture);
     window.effect.resetEffect();
   };
 
@@ -51,7 +53,8 @@
     window.edit.effectLevelPin.addEventListener('mousedown', window.slider.onPinMouseDown);
     imgEffectsList.addEventListener('change', onClickEffectPreview);
     submitButton.addEventListener('click', onClickSubmitButton);
-    window.util.pictureList.removeEventListener('keydown', window.fullsize.onEnterPreviewPicture);
+    pictureList.removeEventListener('keydown', window.fullsize.onEnterPreviewPicture);
   };
+
 
 })();
