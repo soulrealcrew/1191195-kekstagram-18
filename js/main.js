@@ -9,7 +9,7 @@ var onSuccessData = function (data) {
 };
 
 var onErrorData = function (errorLog) {
-  window.util.showErrorDataMessage(errorLog);
+  window.popup.showErrorDataMessage(errorLog);
 };
 
 

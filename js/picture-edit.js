@@ -31,7 +31,6 @@
   };
 
   var onClickSubmitButton = function (evt) {
-    evt.preventDefault();
     window.hashtag.setHashCustomValidity(hashtagInput);
   };
 
