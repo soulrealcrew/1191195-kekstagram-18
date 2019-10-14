@@ -3,16 +3,12 @@
 (function () {
   var ESC_KEY = 27;
   var ENTER_KEY = 13;
-  var imgUploadForm = document.querySelector('.img-upload__form');
-  var pictureList = document.querySelector('.pictures');
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
   var main = document.querySelector('main');
 
   window.util = {
     ESC_KEY: ESC_KEY,
     ENTER_KEY: ENTER_KEY,
-    imgUploadForm: imgUploadForm,
-    pictureList: pictureList,
 
     getRandomNumber: function (max, min) {
       if (min === undefined) {
