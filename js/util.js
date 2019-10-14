@@ -1,13 +1,12 @@
 'use strict';
 // Утилитарный модуль
 (function () {
-
+  var ESC_KEY = 27;
+  var ENTER_KEY = 13;
 
   window.util = {
-    imgUploadForm: document.querySelector('.img-upload__form'),
-    pictureList: document.querySelector('.pictures'),
-    ESC_KEY: 27,
-    ENTER_KEY: 13,
+    ESC_KEY: ESC_KEY,
+    ENTER_KEY: ENTER_KEY,
 
     getRandomNumber: function (max, min) {
       if (min === undefined) {
@@ -19,6 +18,5 @@
     getRandomArrElement: function (arr) {
       return arr[Math.floor(Math.random() * arr.length)];
     },
-
   };
 })();

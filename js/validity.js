@@ -1,20 +1,23 @@
 'use strict';
 // Модуль валидации хэштега
 (function () {
-  var MAX_HASH_LENGTH = 20;
-  var MAX_HASH_COUNT = 5;
-  var HASHTAG_SYMBOL = '#';
+
+  var HashTag = {
+    MAX_LENGTH: 20,
+    MAX_COUNT: 5,
+    SYMBOL: '#',
+  };
 
   var isHashTooLong = function (hash) {
-    return hash.length > MAX_HASH_LENGTH;
+    return hash.length > HashTag.MAX_LENGTH;
   };
 
   var isHashHasSpace = function (hash) {
-    return (hash.indexOf(HASHTAG_SYMBOL, 1) !== -1);
+    return (hash.indexOf(HashTag.SYMBOL, 1) !== -1);
   };
 
   var isHashHasTag = function (hash) {
-    return hash[0] !== HASHTAG_SYMBOL;
+    return hash[0] !== HashTag.SYMBOL;
   };
 
 
@@ -23,21 +26,21 @@
   };
 
   var isHashEmpty = function (hash) {
-    return (hash.length === 1 && hash[0] === HASHTAG_SYMBOL);
+    return (hash.length === 1 && hash[0] === HashTag.SYMBOL);
   };
 
   var isTooMuchHash = function (array) {
-    return array.length > MAX_HASH_COUNT;
+    return array.length > HashTag.MAX_COUNT;
   };
 
   var checkHashValidity = function (input) {
     var validity = {
-      hashToLong: false,
-      hashHasSpace: false,
-      hashHasTag: false,
-      tooMushHashs: false,
-      hashIsRepeat: false,
-      hashIsEmpty: false,
+      'hashToLong': false,
+      'hashHasSpace': false,
+      'hashHasTag': false,
+      'tooMushHashs': false,
+      'hashIsRepeat': false,
+      'hashIsEmpty': false,
     };
 
     var hashs = input.value.split(' ');
@@ -74,12 +77,12 @@
       input.setCustomValidity('');
 
       var localesMap = {
-        hashToLong: 'Длинна одного хэштега не должна превышать 20 символов',
-        hashHasSpace: 'Вы забыли пробел между хэштегами',
-        hashHasTag: 'Используйте символ "#" для указания хэштега',
-        tooMushHashs: 'Максимальное допустимое количество хэштегов не должно превышать 5-ти',
-        hashIsRepeat: 'Нельзя использовать два одинаковых хэштега',
-        hashIsEmpty: 'У хэштега должно быть название',
+        'hashToLong': 'Длинна одного хэштега не должна превышать 20 символов',
+        'hashHasSpace': 'Вы забыли пробел между хэштегами',
+        'hashHasTag': 'Используйте символ "#" для указания хэштега',
+        'tooMushHashs': 'Максимальное допустимое количество хэштегов не должно превышать 5-ти',
+        'hashIsRepeat': 'Нельзя использовать два одинаковых хэштега',
+        'hashIsEmpty': 'У хэштега должно быть название',
       };
 
       if (input.value !== '') {

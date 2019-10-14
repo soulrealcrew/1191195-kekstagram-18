@@ -24,8 +24,7 @@
         fragment.appendChild(renderPicture(photos[i], i));
       }
       return fragment;
-    }
+    },
   };
-
 })();
 
