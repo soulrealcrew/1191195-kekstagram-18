@@ -30,7 +30,7 @@
     window.effect.changePreviewEffect();
   };
 
-  var onClickSubmitButton = function (evt) {
+  var onClickSubmitButton = function () {
     window.hashtag.setHashCustomValidity(hashtagInput);
   };
 
