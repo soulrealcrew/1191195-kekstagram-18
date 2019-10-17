@@ -31,8 +31,25 @@
   };
 
   var onClickSubmitButton = function () {
-    window.hashtag.setHashCustomValidity(hashtagInput);
+    // window.hashtag.setHashCustomValidity(hashtagInput);
   };
+
+
+  hashtagInput.addEventListener('focus', function () {
+    hashtagInput.reportValidity();
+  });
+
+  hashtagInput.addEventListener('input', function () {
+    // submitButton.disabled = true;
+    var lastTimeout;
+    lastTimeout = setTimeout(function () {
+      window.hashtag.setHashCustomValidity(hashtagInput);
+      // hashtagInput.reportValidity();
+      // hashtagInput.style.outline = '2px solid red';
+      // hashtagInput.style.boxShadow = 'inset 0 0 0 1px rgba(245, 12, 12, 0.9)';
+      hashtagInput.style.border = '2px solid red';
+    }, 1000);
+  });
 
   var closeEdit = function () {
     window.util.imgUploadForm.reset();
