@@ -12,12 +12,12 @@
   var hashtagInput = uploadPopup.querySelector('.text__hashtags');
   var commentInput = uploadPopup.querySelector('.text__description');
 
-  var uploadSuccess = function () {
+  var uploadPictureSuccess = function () {
     window.edit.closeEdit();
     window.popup.showSuccessUploadMessage();
   };
 
-  var uploadError = function (message) {
+  var uploadPictureError = function (message) {
     window.popup.showErrorUploadMessage(message);
   };
 
@@ -33,7 +33,7 @@
 
   var checkInputValidity = function () {
     if (hashtagInput.validity.valid) {
-      window.backend.upload(new FormData(uploadPopup), uploadSuccess, uploadError);
+      window.backend.upload(new FormData(uploadPopup), uploadPictureSuccess, uploadPictureError);
     } else {
       hashtagInput.reportValidity();
     }

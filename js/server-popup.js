@@ -79,12 +79,13 @@
       window.edit.imgEditOverlay.classList.remove('hidden');
       retryButton.removeEventListener('click', onRetryButtonClick);
       uploadAnotherFileButton.removeEventListener('click', onUploadAnotherButtonClick);
+      document.removeEventListener('keydown', onEscCloseError);
+      document.removeEventListener('click', onClickCloseError);
       main.removeChild(errorPopup);
     };
 
     var onRetryButtonClick = function () {
       closeErrorPopup();
-      retryButton.removeEventListener('click', onRetryButtonClick);
     };
 
     var onUploadAnotherButtonClick = function () {
