@@ -1,7 +1,7 @@
 'use strict';
 // Модуль работы с окном редактирования изображения
 (function () {
-  // var INVALID_COLOR = 'red';
+  var INVALID_COLOR = 'red';
 
   var pictureList = document.querySelector('.pictures');
   var uploadPopup = document.querySelector('.img-upload__form');
@@ -31,41 +31,33 @@
     window.effect.changePreviewEffect();
   };
 
-  var setFormInvalid = function () {
-    hashtagInput.reportValidity();
-    // hashtagInput.style.borderColor = INVALID_COLOR;
-  };
-
   var checkFormValidity = function () {
     if (hashtagInput.validity.valid) {
       window.backend.upload(new FormData(uploadPopup), uploadSuccess, uploadError);
     } else {
-      setFormInvalid();
+      hashtagInput.reportValidity();
     }
   };
 
   var onClickSubmitButton = function (evt) {
-    window.hashtag.setHashCustomValidity(hashtagInput);
     checkFormValidity();
     evt.preventDefault();
   };
 
 
-  // var hashtagInputValidation = window.util.debounce(function () {
-  //   window.hashtag.setHashCustomValidity(hashtagInput);
-  //   hashtagInput.reportValidity();
-  //   if (hashtagInput.validity.valid) {
-  //     hashtagInput.style.borderColor = '';
-  //     submitButton.disabled = false;
-  //   } else {
-  //     hashtagInput.style.borderColor = INVALID_COLOR;
-  //   }
-  // });
+  var hashtagInputValidation = window.util.debounce(function () {
+    window.hashtag.setHashCustomValidity(hashtagInput);
+    hashtagInput.reportValidity();
+    if (hashtagInput.validity.valid) {
+      hashtagInput.style.borderColor = '';
+    } else {
+      hashtagInput.style.borderColor = INVALID_COLOR;
+    }
+  });
 
-  // var onInputChange = function () {
-  //   submitButton.disabled = true;
-  //   hashtagInputValidation();
-  // };
+  var onInputChange = function () {
+    hashtagInputValidation();
+  };
 
   var closeEdit = function () {
     uploadPopup.reset();
@@ -78,7 +70,7 @@
     pictureList.addEventListener('keydown', window.fullsize.onEnterPreviewPicture);
     pictureList.addEventListener('click', window.fullsize.onClickPreviewPicture);
     pictureList.addEventListener('keydown', window.fullsize.onEnterPreviewPicture);
-    // hashtagInput.removeEventListener('input', onInputChange);
+    hashtagInput.removeEventListener('input', onInputChange);
     window.effect.resetEffect();
   };
 
@@ -92,7 +84,7 @@
     pictureList.removeEventListener('keydown', window.fullsize.onEnterPreviewPicture);
     pictureList.removeEventListener('click', window.fullsize.onClickPreviewPicture);
     pictureList.removeEventListener('keydown', window.fullsize.onEnterPreviewPicture);
-    // hashtagInput.addEventListener('input', onInputChange);
+    hashtagInput.addEventListener('input', onInputChange);
   };
 
   window.edit = {
