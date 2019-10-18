@@ -1,6 +1,8 @@
 'use strict';
 // Модуль работы с окном редактирования изображения
 (function () {
+  var INVALID_COLOR = 'red';
+
   var pictureList = document.querySelector('.pictures');
   var uploadPopup = document.querySelector('.img-upload__form');
   var imgEditOverlay = uploadPopup.querySelector('.img-upload__overlay');
@@ -10,14 +12,24 @@
   var hashtagInput = uploadPopup.querySelector('.text__hashtags');
   var commentInput = uploadPopup.querySelector('.text__description');
 
-  window.edit = {
-    imgPreview: uploadPopup.querySelector('.img-upload__preview').children[0],
-    effectLevelValue: uploadPopup.querySelector('.effect-level__value'),
-    effectLevelPin: uploadPopup.querySelector('.effect-level__pin'),
-    effectLevelCompleteLine: uploadPopup.querySelector('.effect-level__depth'),
-    DEFFAULT_PIN_POSITION: 91,
-    DEFFAULT_VALUE: 20,
+  // window.edit = {
+  //   imgPreview: uploadPopup.querySelector('.img-upload__preview').children[0],
+  //   effectLevelValue: uploadPopup.querySelector('.effect-level__value'),
+  //   effectLevelPin: uploadPopup.querySelector('.effect-level__pin'),
+  //   effectLevelCompleteLine: uploadPopup.querySelector('.effect-level__depth'),
+  //   DEFFAULT_PIN_POSITION: 91,
+  //   DEFFAULT_VALUE: 20,
+  //   closeEdit: closeEdit,
+  //   openEdit: openEdit,
+  // };
 
+  var uploadSuccess = function () {
+    window.edit.closeEdit();
+    window.popup.showSuccessUploadMessage();
+  };
+
+  var uploadError = function (message) {
+    window.popup.showErrorUploadMessage(message);
   };
 
   var onEscButtomCloseEdit = function (evt) {
@@ -31,6 +43,7 @@
   };
 
   var onClickSubmitButton = function (evt) {
+    window.backend.upload(new FormData(uploadPopup), uploadSuccess, uploadError);
     evt.preventDefault();
   };
 
@@ -41,7 +54,7 @@
       hashtagInput.style.borderColor = '';
       submitButton.disabled = false;
     } else {
-      hashtagInput.style.borderColor = 'red';
+      hashtagInput.style.borderColor = INVALID_COLOR;
     }
   });
 
@@ -51,7 +64,7 @@
   };
 
   var closeEdit = function () {
-    window.util.imgUploadForm.reset();
+    uploadPopup.reset();
     imgEditOverlay.classList.add('hidden');
     closeEditButton.removeEventListener('click', closeEdit);
     document.removeEventListener('keydown', onEscButtomCloseEdit);
@@ -65,7 +78,7 @@
     window.effect.resetEffect();
   };
 
-  window.edit.openEdit = function () {
+  var openEdit = function () {
     imgEditOverlay.classList.remove('hidden');
     closeEditButton.addEventListener('click', closeEdit);
     document.addEventListener('keydown', onEscButtomCloseEdit);
@@ -78,5 +91,16 @@
     hashtagInput.addEventListener('input', onInputChange);
   };
 
+  window.edit = {
+    imgPreview: uploadPopup.querySelector('.img-upload__preview').children[0],
+    effectLevelValue: uploadPopup.querySelector('.effect-level__value'),
+    effectLevelPin: uploadPopup.querySelector('.effect-level__pin'),
+    effectLevelCompleteLine: uploadPopup.querySelector('.effect-level__depth'),
+    imgEditOverlay: imgEditOverlay,
+    DEFFAULT_PIN_POSITION: 91,
+    DEFFAULT_VALUE: 20,
+    closeEdit: closeEdit,
+    openEdit: openEdit,
+  };
 
 })();
