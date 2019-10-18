@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var LOAD_TIMEOUT = 1000; // 1s
+  var LOAD_TIMEOUT = 10000; // 1s
   var SUCCESS_STATUS = 200;
 
   var BASE_URL = 'https://js.dump.academy/kekstagram';
@@ -55,7 +55,7 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.open('POST', urls.DATA);
+    xhr.open('POST', BASE_URL);
     xhr.send(data);
   };
 

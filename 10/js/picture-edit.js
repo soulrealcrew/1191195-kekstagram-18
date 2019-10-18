@@ -12,23 +12,12 @@
   var hashtagInput = uploadPopup.querySelector('.text__hashtags');
   var commentInput = uploadPopup.querySelector('.text__description');
 
-  // window.edit = {
-  //   imgPreview: uploadPopup.querySelector('.img-upload__preview').children[0],
-  //   effectLevelValue: uploadPopup.querySelector('.effect-level__value'),
-  //   effectLevelPin: uploadPopup.querySelector('.effect-level__pin'),
-  //   effectLevelCompleteLine: uploadPopup.querySelector('.effect-level__depth'),
-  //   DEFFAULT_PIN_POSITION: 91,
-  //   DEFFAULT_VALUE: 20,
-  //   closeEdit: closeEdit,
-  //   openEdit: openEdit,
-  // };
-
-  var uploadSuccess = function () {
+  var uploadPictureSuccess = function () {
     window.edit.closeEdit();
     window.popup.showSuccessUploadMessage();
   };
 
-  var uploadError = function (message) {
+  var uploadPictureError = function (message) {
     window.popup.showErrorUploadMessage(message);
   };
 
@@ -42,17 +31,25 @@
     window.effect.changePreviewEffect();
   };
 
+  var checkInputValidity = function () {
+    if (hashtagInput.validity.valid) {
+      window.backend.upload(new FormData(uploadPopup), uploadPictureSuccess, uploadPictureError);
+    } else {
+      hashtagInput.reportValidity();
+    }
+  };
+
   var onClickSubmitButton = function (evt) {
-    window.backend.upload(new FormData(uploadPopup), uploadSuccess, uploadError);
+    checkInputValidity();
     evt.preventDefault();
   };
 
   var hashtagInputValidation = window.util.debounce(function () {
     window.hashtag.setHashCustomValidity(hashtagInput);
     hashtagInput.reportValidity();
+    submitButton.disabled = false;
     if (hashtagInput.validity.valid) {
       hashtagInput.style.borderColor = '';
-      submitButton.disabled = false;
     } else {
       hashtagInput.style.borderColor = INVALID_COLOR;
     }
