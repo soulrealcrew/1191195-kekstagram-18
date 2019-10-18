@@ -12,17 +12,6 @@
   var hashtagInput = uploadPopup.querySelector('.text__hashtags');
   var commentInput = uploadPopup.querySelector('.text__description');
 
-  // window.edit = {
-  //   imgPreview: uploadPopup.querySelector('.img-upload__preview').children[0],
-  //   effectLevelValue: uploadPopup.querySelector('.effect-level__value'),
-  //   effectLevelPin: uploadPopup.querySelector('.effect-level__pin'),
-  //   effectLevelCompleteLine: uploadPopup.querySelector('.effect-level__depth'),
-  //   DEFFAULT_PIN_POSITION: 91,
-  //   DEFFAULT_VALUE: 20,
-  //   closeEdit: closeEdit,
-  //   openEdit: openEdit,
-  // };
-
   var uploadSuccess = function () {
     window.edit.closeEdit();
     window.popup.showSuccessUploadMessage();
@@ -42,26 +31,41 @@
     window.effect.changePreviewEffect();
   };
 
+  var setFormInvalid = function () {
+    hashtagInput.reportValidity();
+    // hashtagInput.style.borderColor = INVALID_COLOR;
+  };
+
+  var checkFormValidity = function () {
+    if (hashtagInput.validity.valid) {
+      window.backend.upload(new FormData(uploadPopup), uploadSuccess, uploadError);
+    } else {
+      setFormInvalid();
+    }
+  };
+
   var onClickSubmitButton = function (evt) {
-    window.backend.upload(new FormData(uploadPopup), uploadSuccess, uploadError);
+    window.hashtag.setHashCustomValidity(hashtagInput);
+    checkFormValidity();
     evt.preventDefault();
   };
 
-  var hashtagInputValidation = window.util.debounce(function () {
-    window.hashtag.setHashCustomValidity(hashtagInput);
-    hashtagInput.reportValidity();
-    if (hashtagInput.validity.valid) {
-      hashtagInput.style.borderColor = '';
-      submitButton.disabled = false;
-    } else {
-      hashtagInput.style.borderColor = INVALID_COLOR;
-    }
-  });
 
-  var onInputChange = function () {
-    submitButton.disabled = true;
-    hashtagInputValidation();
-  };
+  // var hashtagInputValidation = window.util.debounce(function () {
+  //   window.hashtag.setHashCustomValidity(hashtagInput);
+  //   hashtagInput.reportValidity();
+  //   if (hashtagInput.validity.valid) {
+  //     hashtagInput.style.borderColor = '';
+  //     submitButton.disabled = false;
+  //   } else {
+  //     hashtagInput.style.borderColor = INVALID_COLOR;
+  //   }
+  // });
+
+  // var onInputChange = function () {
+  //   submitButton.disabled = true;
+  //   hashtagInputValidation();
+  // };
 
   var closeEdit = function () {
     uploadPopup.reset();
@@ -74,7 +78,7 @@
     pictureList.addEventListener('keydown', window.fullsize.onEnterPreviewPicture);
     pictureList.addEventListener('click', window.fullsize.onClickPreviewPicture);
     pictureList.addEventListener('keydown', window.fullsize.onEnterPreviewPicture);
-    hashtagInput.removeEventListener('input', onInputChange);
+    // hashtagInput.removeEventListener('input', onInputChange);
     window.effect.resetEffect();
   };
 
@@ -88,7 +92,7 @@
     pictureList.removeEventListener('keydown', window.fullsize.onEnterPreviewPicture);
     pictureList.removeEventListener('click', window.fullsize.onClickPreviewPicture);
     pictureList.removeEventListener('keydown', window.fullsize.onEnterPreviewPicture);
-    hashtagInput.addEventListener('input', onInputChange);
+    // hashtagInput.addEventListener('input', onInputChange);
   };
 
   window.edit = {
