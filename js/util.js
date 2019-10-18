@@ -3,7 +3,7 @@
 (function () {
   var ESC_KEY = 27;
   var ENTER_KEY = 13;
-  var DEBOUNCE_INTERVAL = 1000; // ms
+  var DEBOUNCE_INTERVAL = 500; // ms
 
   var debounce = function (cb) {
     var lastTimeout = null;

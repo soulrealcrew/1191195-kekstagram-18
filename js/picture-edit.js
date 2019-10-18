@@ -31,7 +31,7 @@
     window.effect.changePreviewEffect();
   };
 
-  var checkFormValidity = function () {
+  var checkInputValidity = function () {
     if (hashtagInput.validity.valid) {
       window.backend.upload(new FormData(uploadPopup), uploadSuccess, uploadError);
     } else {
@@ -40,14 +40,14 @@
   };
 
   var onClickSubmitButton = function (evt) {
-    checkFormValidity();
+    checkInputValidity();
     evt.preventDefault();
   };
-
 
   var hashtagInputValidation = window.util.debounce(function () {
     window.hashtag.setHashCustomValidity(hashtagInput);
     hashtagInput.reportValidity();
+    submitButton.disabled = false;
     if (hashtagInput.validity.valid) {
       hashtagInput.style.borderColor = '';
     } else {
@@ -56,6 +56,7 @@
   });
 
   var onInputChange = function () {
+    submitButton.disabled = true;
     hashtagInputValidation();
   };
 
