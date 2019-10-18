@@ -1,7 +1,7 @@
 'use strict';
 // Модуль работы с окном редактирования изображения
 (function () {
-  var INVALID_COLOR = 'red';
+  // var INVALID_COLOR = 'red';
 
   var pictureList = document.querySelector('.pictures');
   var uploadPopup = document.querySelector('.img-upload__form');
