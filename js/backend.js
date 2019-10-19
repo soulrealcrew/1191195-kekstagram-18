@@ -4,18 +4,12 @@
   var LOAD_TIMEOUT = 10000; // 10s
   var SUCCESS_STATUS = 200;
 
-  var Request = {
-    'download': {
-      URL: 'https://js.dump.academy/kekstagram/data',
-      ACTION: 'GET',
-    },
-    'upload': {
-      URL: 'https://js.dump.academy/kekstagram',
-      ACTION: 'POST',
-    }
+  var BASE_URL = 'https://js.dump.academy/kekstagram';
+  var urls = {
+    DATA: BASE_URL + '/data',
   };
 
-  var download = function (onSuccess, onError) {
+  var createXhr = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.timeout = LOAD_TIMEOUT;
@@ -36,12 +30,24 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.open(Request['download'].ACTION, Request['download'].URL);
+    return xhr;
+  };
+
+  var upload = function (data, onSuccess, onError) {
+    var xhr = createXhr(onSuccess, onError);
+    xhr.open('POST', BASE_URL);
+    xhr.send(data);
+  };
+
+  var download = function (onSuccess, onError) {
+    var xhr = createXhr(onSuccess, onError);
+    xhr.open('GET', urls.DATA);
     xhr.send();
   };
 
   window.backend = {
     download: download,
+    upload: upload,
   };
 
 })();
