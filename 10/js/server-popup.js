@@ -12,7 +12,6 @@
         popupTemplate.querySelector('.error__title').textContent = message;
       }
 
-
       var closePopup = function () {
         main.removeChild(popupTemplate);
         document.removeEventListener('keydown', onEscClosePopup);
@@ -28,6 +27,9 @@
             window.edit.closeEdit();
             break;
         }
+        buttonsTemplate.forEach(function (button) {
+          button.removeEventListener('click', onButtonClick);
+        });
         closePopup();
       };
 
