@@ -1,6 +1,9 @@
 'use strict';
 // Модуль сортировки изображений
 (function () {
+  var FILTER_RANDOM = 'filter-random';
+  var FILTER_DISCUSSED = 'filter-discussed';
+
   var filterForm = document.querySelector('.img-filters');
 
   var sortByDiscussed = function (firstPic, secondPic) {
@@ -16,24 +19,26 @@
     return Math.random() - 0.5;
   };
 
-  var getSortPictureList = function (evt, data) {
-    switch (evt.target.id) {
-      case 'filter-random':
+  var getSortPictureList = function (filterName, data) {
+    switch (filterName) {
+      case FILTER_RANDOM:
         return data.sort(sortByRandom).slice(0, 10);
-      case 'filter-discussed':
+      case FILTER_DISCUSSED:
         return data.sort(sortByDiscussed);
       default:
         return data;
     }
   };
 
-  var getActiveButton = function () {
-    return filterForm.querySelector('.img-filters__button--active');
+  var activeButtonToggle = function (button) {
+    var activeButton = filterForm.querySelector('.img-filters__button--active');
+    activeButton.classList.remove('img-filters__button--active');
+    button.classList.add('img-filters__button--active');
   };
 
   var changeFilter = window.util.debounce(function (evt) {
     var data = window.util.pictureListDataDefault.slice();
-    var sortedPictureList = getSortPictureList(evt, data);
+    var sortedPictureList = getSortPictureList(evt.target.id, data);
     window.util.pictureListData = sortedPictureList;
     window.gallery.showPictureList(sortedPictureList);
   });
@@ -42,8 +47,7 @@
     if (evt.target.tagName !== 'BUTTON') {
       return;
     }
-    getActiveButton().classList.remove('img-filters__button--active');
-    evt.target.classList.add('img-filters__button--active');
+    activeButtonToggle(evt.target);
     changeFilter(evt);
   };
 
