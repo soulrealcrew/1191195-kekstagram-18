@@ -67,8 +67,14 @@
     hashtagInputValidation();
   };
 
-  var closeEdit = function () {
+  var formReset = function () {
     uploadPopup.reset();
+    window.effect.resetEffect();
+    window.scale.resetScale();
+  };
+
+  var closeEdit = function () {
+    formReset();
     imgEditOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onEscButtomCloseEdit);
     window.edit.effectLevelPin.removeEventListener('mousedown', window.slider.onPinMouseDown);
@@ -77,7 +83,7 @@
     pictureList.addEventListener('keydown', window.fullsize.onEnterPreviewPicture);
     pictureList.addEventListener('click', window.fullsize.onClickPreviewPicture);
     hashtagInput.removeEventListener('input', onInputChange);
-    window.effect.resetEffect();
+    window.scale.scaleForm.removeEventListener('click', window.scale.onScaleButtonClick);
   };
 
   var openEdit = function () {
@@ -89,8 +95,8 @@
     submitButton.addEventListener('click', onClickSubmitButton);
     pictureList.removeEventListener('keydown', window.fullsize.onEnterPreviewPicture);
     pictureList.removeEventListener('click', window.fullsize.onClickPreviewPicture);
-    window.util.removeClickEvent(pictureList, window.fullsize.onClickPreviewPicture);
     hashtagInput.addEventListener('input', onInputChange);
+    window.scale.scaleForm.addEventListener('click', window.scale.onScaleButtonClick);
   };
 
   window.edit = {
